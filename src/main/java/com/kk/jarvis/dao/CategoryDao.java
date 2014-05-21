@@ -32,11 +32,15 @@ public class CategoryDao {
 
        sqlQuery = "insert into user_category(user_id, category, sub_category) values(?,?,?)";
        int result = jdbcTemplate.update(sqlQuery,
-               new Object[]{categoryDto.getUserId(), categoryDto.getCategory(), categoryDto.getSubCategory()});
+               new Object[]{categoryDto.getUserId(), categoryDto.getCategory(), categoryDto.getSubCategory()
+               });
 
        if(result > 0)
            return categoryDto;
 
        return null;
    }
+
+
+
 }

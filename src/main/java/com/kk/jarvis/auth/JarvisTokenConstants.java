@@ -12,6 +12,6 @@ public class JarvisTokenConstants {
     public static final String DEFAULT_AUTH_PROVIDER_HEADER = "X-Jarvis-Authentication-Provider";
     public static final String DEFAULT_AUTH_TOKEN_HEADER = "X-Jarvis-Auth-Token";
 
-    public static final String CLIENT_SECRET_KEY_NAME = "clientSecret";
+    public static final String CLIENT_SECRET_KEY_NAME = "apiSecret";
 
 }

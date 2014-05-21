@@ -42,10 +42,9 @@ public class UserDataDao extends JarvisDao{
         args.add(userDataDto.getName());
         args.add(userDataDto.getValue());
         args.add(userDataDto.getUnit());
-        args.add(userDataDto.getAddTime());
 
-        String sqlQuery = "insert into user_data(`user_id`,`category`,`sub_category`,`name`,`value`,`unit`,`add_time`)" +
-                " values(?,?,?,?,?,?,?)";
+        String sqlQuery = "insert into user_data(`user_id`,`category`,`sub_category`,`name`,`value`,`unit`)" +
+                " values(?,?,?,?,?,?)";
         int result = jdbcTemplate.update(sqlQuery, args.toArray());
 
         if(result > 0) {

@@ -110,4 +110,18 @@ public class JarvisTokenDecoder {
     protected String base64Decode(String str) throws IOException {
         return BaseEncoding.base64Url().decodingSource(CharStreams.asCharSource(str)).asCharSource(Charsets.UTF_8).read();
     }
+
+    /**
+     * Signs a payload using a secret.
+     * @param payload
+     * @param secret
+     * @return
+     * @throws Exception
+     */
+    public String signToken(String payload, String secret) throws Exception {
+        String encodedPayload = base64Encode(payload.getBytes());
+        String signature = createSignature(payload, Charsets.UTF_8, secret, DEFAULT_ALGORITHM);
+        return signature +"." + encodedPayload;
+
+    }
 }

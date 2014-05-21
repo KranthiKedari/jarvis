@@ -12,8 +12,6 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import java.util.Collection;
-
 /**
  * Created with IntelliJ IDEA.
  * User: kkedari
@@ -92,13 +90,13 @@ public class JarvisAuthTokenResolver implements HandlerMethodArgumentResolver {
 
         token.markAuthorized(true); //TODO add acls
 
-        Collection<String> acls = null;
+        /*Collection<String> acls = null;
         logger.error("Acl" + acls.toString());
         if (acls.contains(parameter.getMethod().getName())) {
             token.markAuthorized(true);
             logger.error("Authorized successfully");
 
-        }
+        } */
     }
 
     protected String getSecretKey(String provider) {

@@ -1,7 +1,5 @@
 package com.kk.jarvis.auth;
 
-import org.springframework.stereotype.Component;
-
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -13,7 +11,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * Time: 2:32 PM
  * To change this template use File | Settings | File Templates.
  */
-@Component
 public class JarvisSecurity {
 
     private ConcurrentHashMap<String, ConcurrentHashMap<String, String>> secrets;

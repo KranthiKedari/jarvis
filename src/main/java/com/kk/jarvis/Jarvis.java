@@ -1,9 +1,11 @@
 package com.kk.jarvis;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.kk.jarvis.auth.*;
 import com.kk.jarvis.dao.mysql.MySqlConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +17,7 @@ import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,22 +31,22 @@ public class Jarvis extends DelegatingWebMvcConfiguration {
     @Autowired(required = true)
     private JarvisTokenDecoder jarvisTokenDecoder;
 
-    @Autowired(required = true)
-    private JarvisSecurity jarvisSecurity;
+
 
     public static void main(String[] args) {
         SpringApplication.run(Jarvis.class, args);
     }
 
     @Bean
-    public JarvisAuthTokenResolver jarvisAuthTokenResolver() {
+    public JarvisAuthTokenResolver jarvisAuthTokenResolver() throws IOException {
         JarvisAuthTokenResolver resolver =
                 new JarvisAuthTokenResolver(
                         jarvisTokenDecoder,
                         JarvisAuthToken.class,
-                        JarvisTokenConstants.DEFAULT_AUTH_TOKEN_HEADER,
-                        jarvisSecurity,
-                        JarvisTokenConstants.CLIENT_SECRET_KEY_NAME);
+                        JarvisTokenConstants.CLIENT_SECRET_KEY_NAME,
+                        jarvisSecurity(),
+                        JarvisTokenConstants.DEFAULT_AUTH_TOKEN_HEADER
+        );
 
         RequestMappingHandlerAdapter requestMappingHandlerAdapter   = this.requestMappingHandlerAdapter();
 
@@ -62,5 +65,13 @@ public class Jarvis extends DelegatingWebMvcConfiguration {
 
         requestMappingHandlerAdapter.setReturnValueHandlers(handlers);
         return handlers;
+    }
+
+    @Value("${jarvisSecurity}")
+    private String securityDefinitionJson;
+
+    @Bean
+    public JarvisSecurity jarvisSecurity() throws IOException {
+        return new ObjectMapper().readValue(securityDefinitionJson, JarvisSecurity.class);
     }
 }

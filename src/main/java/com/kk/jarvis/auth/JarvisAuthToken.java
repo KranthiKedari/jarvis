@@ -1,5 +1,8 @@
 package com.kk.jarvis.auth;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -13,8 +16,34 @@ public class JarvisAuthToken implements JarvisToken {
 
     private String algorithm;
 
+
+
+    private int userId;
+
     private AtomicReference<Boolean> authenticated = new AtomicReference<Boolean>(null);
     private AtomicReference<Boolean> authorized = new AtomicReference<Boolean>(null);
+
+    public JarvisAuthToken() {
+
+    }
+
+    @JsonCreator
+    public JarvisAuthToken(
+            @JsonProperty("user_id") int userId,
+            @JsonProperty("algorithm") String algorithm
+    )
+    {
+        this.userId = userId;
+        this.algorithm = algorithm;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 
     @Override
     public boolean isValid() {

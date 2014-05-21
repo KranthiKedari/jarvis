@@ -1,12 +1,15 @@
 package com.kk.jarvis.processor.command;
 
 import com.kk.jarvis.dao.CategoryDao;
+import com.kk.jarvis.dao.UserStatsDao;
 import com.kk.jarvis.dto.CategoryDto;
 import com.kk.jarvis.dto.UserInfoDto;
+import com.kk.jarvis.dto.UserStatsDto;
 import com.kk.jarvis.processor.Command;
 import com.kk.jarvis.processor.CommandProcessor;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,6 +43,14 @@ public class CategoryCommand implements Command {
 
         CategoryDao categoryDao = new CategoryDao(jdbcTemplate);
         CategoryDto response = categoryDao.addCategory(categoryDto);
+        List<UserStatsDto> statsList = new ArrayList<UserStatsDto>();
+
+        statsList.add(new UserStatsDto(userInfoDto.getUserId(),"category", category));
+
+        statsList.add(new UserStatsDto(userInfoDto.getUserId(),"subcategory", subCategory));
+
+        UserStatsDao userStatsDao = new UserStatsDao(jdbcTemplate);
+        userStatsDao.setUserStats(statsList);
 
         if(response != null) {
             return params;
