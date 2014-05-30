@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ import java.util.List;
 
 @Configuration
 @EnableAutoConfiguration
+@EnableWebMvc
 @Import({ MySqlConfiguration.class})
 @ComponentScan(basePackageClasses = Jarvis.class)
 public class Jarvis extends DelegatingWebMvcConfiguration {
@@ -53,7 +55,6 @@ public class Jarvis extends DelegatingWebMvcConfiguration {
         List<HandlerMethodArgumentResolver> handlerMethodArgumentResolvers = Lists.newLinkedList(requestMappingHandlerAdapter.getArgumentResolvers());
 
         handlerMethodArgumentResolvers.add(0, resolver);
-
         this.requestMappingHandlerAdapter().setArgumentResolvers(handlerMethodArgumentResolvers);
 
         return resolver;
@@ -74,4 +75,23 @@ public class Jarvis extends DelegatingWebMvcConfiguration {
     public JarvisSecurity jarvisSecurity() throws IOException {
         return new ObjectMapper().readValue(securityDefinitionJson, JarvisSecurity.class);
     }
+    /*
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        super.addViewControllers(registry);
+
+        registry.addViewController("/welcome");
+    }
+
+    @Bean
+    public ViewResolver viewResolver() {
+        InternalResourceViewResolver bean = new InternalResourceViewResolver();
+
+        bean.setViewClass(JstlView.class);
+        bean.setPrefix("/WEB-INF/view/");
+        bean.setSuffix(".jsp");
+
+        return bean;
+    }
+    */
 }

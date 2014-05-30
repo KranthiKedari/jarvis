@@ -2,10 +2,11 @@ package com.kk.jarvis.controller;
 
 import com.kk.jarvis.auth.JarvisAuthToken;
 import com.kk.jarvis.auth.JarvisTokenDecoder;
-import com.kk.jarvis.dao.UserDataDao;
+import com.kk.jarvis.charts.GoogleCharts;
+import com.kk.jarvis.dao.UserDataSearchDao;
 import com.kk.jarvis.dao.UserInfoDao;
 import com.kk.jarvis.dao.UserStatsDao;
-import com.kk.jarvis.dto.UserDataDto;
+import com.kk.jarvis.dto.UserDataSearchDto;
 import com.kk.jarvis.dto.UserInfoDto;
 import com.kk.jarvis.dto.UserStatsDto;
 import com.kk.jarvis.processor.Command;
@@ -47,11 +48,58 @@ public class JarvisController {
 
     @RequestMapping("/jarvis/get")
     public @ResponseBody
-    List<UserDataDto> getUserData(
-            @RequestParam(value="name", required=false, defaultValue="World") String name) {
-        UserDataDao userDao = new UserDataDao(jdbcTemplate);
-        List<UserDataDto> response =  userDao.getUserData();
-        return response;
+    List<Map<String,String>> getUserData(
+            @RequestHeader("X-Jarvis-Authentication-Provider") final String provider,
+            @RequestHeader("X-Jarvis-Auth-Token") final JarvisAuthToken authToken,
+            @RequestBody(required=true) UserDataSearchDto userDataSearchDto) {
+
+        // set the user ID
+        userDataSearchDto.setUserId(authToken.getUserId());
+
+        if(userDataSearchDto.getCategory() == null ) {
+            userDataSearchDto.setCategory("food");
+        }
+
+        if(userDataSearchDto.getSearchParams() == null ) {
+            Map<String, String> searchParams = new HashMap<String, String>();
+            searchParams.put("type", "aggregation");
+            searchParams.put("interval_type", "year");
+            searchParams.put("interval", "1");
+            userDataSearchDto.setSearchParams(searchParams);
+        }
+
+        UserDataSearchDao userDataSearchDao = new UserDataSearchDao(jdbcTemplate);
+
+        return userDataSearchDao.getData(userDataSearchDto);
+    }
+
+    @RequestMapping("/jarvis/google/get")
+    public @ResponseBody
+    String getUserDataGorGoogleCharts(
+            @RequestHeader("X-Jarvis-Authentication-Provider") final String provider,
+            @RequestHeader("X-Jarvis-Auth-Token") final JarvisAuthToken authToken,
+            @RequestBody(required=true) UserDataSearchDto userDataSearchDto) {
+
+        // set the user ID
+        userDataSearchDto.setUserId(authToken.getUserId());
+
+        if(userDataSearchDto.getCategory() == null ) {
+            userDataSearchDto.setCategory("food");
+        }
+
+        if(userDataSearchDto.getSearchParams() == null ) {
+            Map<String, String> searchParams = new HashMap<String, String>();
+            searchParams.put("type", "aggregation");
+            searchParams.put("interval_type", "year");
+            searchParams.put("interval", "1");
+            userDataSearchDto.setSearchParams(searchParams);
+        }
+
+        UserDataSearchDao userDataSearchDao = new UserDataSearchDao(jdbcTemplate);
+
+        List<Map<String, String>> result = userDataSearchDao.getData(userDataSearchDto);
+        return new GoogleCharts(userDataSearchDto).getGoogleChartsDataForAggregation(result);
+
     }
 
     @RequestMapping("/jarvis/addMulti")
