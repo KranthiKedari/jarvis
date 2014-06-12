@@ -1,0 +1,154 @@
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#sendCommands").click(function(){
+                var commands = $("#commandEntry").val();
+
+                if(commands.length == 0) {
+                    alert("Empty command list");
+                    return;
+                }
+
+                $.ajax({type:'POST',
+                    url:"http://localhost:8080/jarvis/add",
+                    headers: {
+                        'X-Jarvis-Auth-Token' : 'ammIw5MH2vj4QusYCW9HJXRfmUTJA96AetDdQyo733s.eyJ1c2VyX2lkIjoxLCJhbGdvcml0aG0iOiJIbWFjU0hBMjU2In0',
+                        'X-Jarvis-Authentication-Provider':'client',
+                        'Content-Type' :'application/json'
+                    },
+                    success: handleSendCommands,
+                    data:commands
+                });
+            });
+
+            $("#getGraphData").click(function(){
+                name = $("#name").val();
+                category = $("#category").val();
+                interval =  $("#interval").val();
+                intervalType =   $("#intervalType").val();
+                dataType = $("#dataType").val();
+                var dataObj = {
+
+                }  ;
+
+                if(name.length > 0 ) {
+                    dataObj.name = name;
+                };
+
+                if(category.length > 0 ) {
+                    dataObj.category = category;
+                };
+
+
+                dataObj.searchParams = {
+                    type:dataType
+                } ;
+
+                if(interval.length > 0 ) {
+                    dataObj.searchParams.interval = interval;
+                }else {
+                    dataObj.searchParams.interval = 4;
+
+                };
+
+                if(intervalType.length > 0 ) {
+                    dataObj.searchParams.interval_type = intervalType;
+                };
+                $.ajax({type:'POST',
+                        url:"http://localhost:8080/jarvis/google/get",
+                        headers: {
+                            'X-Jarvis-Auth-Token' : 'ammIw5MH2vj4QusYCW9HJXRfmUTJA96AetDdQyo733s.eyJ1c2VyX2lkIjoxLCJhbGdvcml0aG0iOiJIbWFjU0hBMjU2In0',
+                            'X-Jarvis-Authentication-Provider':'client',
+                            'Content-Type' :'application/json'
+                        },
+                         success: handleData,
+                         data:JSON.stringify( dataObj )
+                });
+            });
+        });
+
+        function handleData(data ) {
+            drawChart( jQuery.parseJSON( data ), 'Water Consumption', 'TIME', 'BOTTLES' );
+        }
+
+        function handleSendCommands(data) {
+            $("textarea#commandResponse").val( "Response from the server :\n" +data);
+        }
+    </script>
+    <script type="text/javascript">
+
+
+        // Load the Visualization API and the piechart package.
+        google.load('visualization', '1.0', {'packages':['corechart']});
+
+        // Set a callback to run when the Google Visualization API is loaded.
+        //google.setOnLoadCallback(drawChart);
+
+        // Callback that creates and populates a data table,
+        // instantiates the pie chart, passes in the data and
+        // draws it.
+        function drawChart(data, title, yaxis, xaxis) {
+
+
+            // Create the data table.
+            var data = google.visualization.arrayToDataTable(data);
+
+            // Create and draw the visualization.
+            new google.visualization.AreaChart(document.getElementById('chart_div1')).
+                    draw(data,
+                    {title:title,
+                        width:1600, height:800,
+                        vAxis: {title: yaxis},
+                        hAxis: {title: xaxis}}
+            );
+        }
+
+
+    </script>
+</head>
+
+<body>
+<!--Div that will hold the pie chart-->
+<div id="control_div" style="border:2px solid;border-width:3px;">
+    <p>
+    Name:
+    <input type="text" id="name">
+     Category:  <input type="text" id="category">
+     Sub Category:  <input type="text" id="subCategory">
+        Interval Type:
+        <select id="intervalType">
+            <option value="year">Year</option>
+            <option value="month">Month</option>
+            <option value="day" selected>Day</option>
+            <option value="hour">Hour</option>
+        </select>
+
+        Interval<input type="text" id="interval">
+        Data Retrieval Type:
+
+        <select id="dataType">
+            <option value="progression">PROGRESSION</option>
+            <option value="aggregation" selected>AGGREGATION</option>
+        </select>
+    </p>
+    <input type="button" id="getGraphData" value="Get Data">
+
+</div>
+<div id="spacer" style="height: 5px;"></div>
+<div id="entry_div" style="border:2px solid;border-width:3px;height: 150px;">
+    <textarea id="commandEntry"  style="height: 150px;width:400px"></textarea>
+    <input type="button" id="sendCommands" value="Send Data"  style="position:fixed;">
+
+    <textarea id="commandResponse" style="height: 150px;width:400px;float:right;"></textarea>
+
+</div>
+<div id="chart_div1"></div>
+<div id="chart_div2"></div>
+
+
+</body>
+</html>

@@ -52,3 +52,29 @@ create table if not exists `user_data`
 	`add_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	primary key (id)
 );
+
+create table if not exists `user_goals`
+(
+	`id` int(11) not null auto_increment,
+	`user_id` int(11) not null,
+	`name` varchar(40) not null,
+	`unit` varchar(40) not null,
+	`category` varchar(40) not null,
+	`sub_category` varchar(40) not null,
+	`goal_type` varchar(40) not null,
+	`value` varchar(40) not null,
+	`interval` int(11) not null,
+	`add_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	primary key (id)
+);
+
+create table if not exists `user_unit_mappings`
+(
+	`id` int(11) not null auto_increment,
+	`user_id` int(11) not null,
+	`unit` varchar(40) not null,
+	`category` varchar(40) not null,
+	`sub_category` varchar(40),
+	`add_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	primary key (id)
+);

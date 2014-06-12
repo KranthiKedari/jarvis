@@ -1,7 +1,5 @@
 package com.kk.jarvis.dto;
 
-import java.util.Date;
-
 /**
  * Created with IntelliJ IDEA.
  * User: kkedari
@@ -9,7 +7,7 @@ import java.util.Date;
  * Time: 2:38 PM
  * To change this template use File | Settings | File Templates.
  */
-public class UserDataDto {
+public class UserGoalDto {
 
     private String name;
 
@@ -21,9 +19,30 @@ public class UserDataDto {
 
     private String subCategory;
 
-    private Date addTime;
+    private long addTime;
 
     private String unit;
+
+    private String type;
+
+    private int interval;
+
+
+    public int getInterval() {
+        return interval;
+    }
+
+    public void setInterval(int interval) {
+        this.interval = interval;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getName() {
         return name;
@@ -65,11 +84,11 @@ public class UserDataDto {
         this.subCategory = subCategory;
     }
 
-    public Date getAddTime() {
+    public long getAddTime() {
         return addTime;
     }
 
-    public void setAddTime(Date addTime) {
+    public void setAddTime(long addTime) {
         this.addTime = addTime;
     }
 

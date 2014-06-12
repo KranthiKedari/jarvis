@@ -14,7 +14,7 @@ public class UserInfoDto {
     private int userId;
 
     public UserInfoDto() {
-        userData = new HashMap<String, String>();
+        userData = new HashMap<String, Object>();
     }
 
     public int getUserId() {
@@ -25,13 +25,21 @@ public class UserInfoDto {
         this.userId = userId;
     }
 
-    private Map<String, String> userData;
+    private Map<String, Object> userData;
 
-    public String getUserData(String key) {
+    public Object getUserData(String key) {
         return userData.containsKey(key) ? userData.get(key) : null;
     }
 
-    public void setUserData(String key, String value) {
+    public void setUserData(String key, Object value) {
+        userData.put(key, value);
+    }
+
+    public String getUserDataString(String key) {
+        return userData.containsKey(key) ? (String) userData.get(key) : null;
+    }
+
+    public void setUserDataString(String key, String value) {
         userData.put(key, value);
     }
 

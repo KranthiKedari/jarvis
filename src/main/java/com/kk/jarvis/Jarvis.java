@@ -27,7 +27,7 @@ import java.util.List;
 @EnableAutoConfiguration
 @EnableWebMvc
 @Import({ MySqlConfiguration.class})
-@ComponentScan(basePackageClasses = Jarvis.class)
+@ComponentScan
 public class Jarvis extends DelegatingWebMvcConfiguration {
 
     @Autowired(required = true)
@@ -75,6 +75,8 @@ public class Jarvis extends DelegatingWebMvcConfiguration {
     public JarvisSecurity jarvisSecurity() throws IOException {
         return new ObjectMapper().readValue(securityDefinitionJson, JarvisSecurity.class);
     }
+
+
     /*
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {

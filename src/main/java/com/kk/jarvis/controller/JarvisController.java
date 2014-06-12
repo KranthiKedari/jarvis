@@ -3,12 +3,8 @@ package com.kk.jarvis.controller;
 import com.kk.jarvis.auth.JarvisAuthToken;
 import com.kk.jarvis.auth.JarvisTokenDecoder;
 import com.kk.jarvis.charts.GoogleCharts;
-import com.kk.jarvis.dao.UserDataSearchDao;
-import com.kk.jarvis.dao.UserInfoDao;
-import com.kk.jarvis.dao.UserStatsDao;
-import com.kk.jarvis.dto.UserDataSearchDto;
-import com.kk.jarvis.dto.UserInfoDto;
-import com.kk.jarvis.dto.UserStatsDto;
+import com.kk.jarvis.dao.*;
+import com.kk.jarvis.dto.*;
 import com.kk.jarvis.processor.Command;
 import com.kk.jarvis.processor.CommandProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,9 +93,13 @@ public class JarvisController {
         }
 
         UserDataSearchDao userDataSearchDao = new UserDataSearchDao(jdbcTemplate);
+        List<UserGoalDto> goals = new ArrayList<>();
+        if(userDataSearchDto.getName() != null) {
+            goals = new UserGoalDao(jdbcTemplate).getUserGoals(userDataSearchDto);
 
+        }
         List<Map<String, String>> result = userDataSearchDao.getData(userDataSearchDto);
-        return new GoogleCharts(userDataSearchDto).getGoogleChartsDataForAggregation(result);
+        return new GoogleCharts(userDataSearchDto).getGoogleChartsDataForAggregation(result, goals);
 
     }
 
@@ -148,6 +149,9 @@ public class JarvisController {
             if(userInfoDto.getUserData("category") == null) {
                 userInfoDto.setUserData("category", "expenditure");
             }
+
+            Map<String, UserUnitAssignmentDto> assignments = new UserUnitAssignmentDao(jdbcTemplate).getUserAssignments(userInfoDto);
+            userInfoDto.setUserData("assignments", assignments);
             userInfo.put(userId, info);
         }
         if(userInfoDto.getUserData("category") == null) {

@@ -28,47 +28,30 @@ public class UserDataSearchDao {
         String type = userDataSearchDto.getSearchType();
 
         if(type.equals("aggregation")) {
-            return aggregateData(userDataSearchDto);
-        } else if(type.equals("progession")) {
-
+            return aggregateData(userDataSearchDto, true);
+        } else if(type.equals("progression")) {
+            return aggregateData(userDataSearchDto, false);
         }
 
 
         return null;
     }
-    private List<Map<String,String>> getProgressiveData(UserDataSearchDto userDataSearchDto) {
 
-        StringBuffer sqlQuery = new StringBuffer("select * from user_data");
-        StringBuffer  sqlWhere = new StringBuffer();
-
-        boolean andFlag = false;
-        List<Object> args = new ArrayList<Object>();
-        if(userDataSearchDto.getStartDate() != 0) {
-            if(andFlag)
-            {
-                sqlWhere.append(" and ");
-            }
-            sqlWhere.append(" add_time >= from_unixtime(?) ");
-            andFlag = true;
-            args.add(userDataSearchDto.getStartDate());
+    private List<Map<String,String>> aggregateData(UserDataSearchDto userDataSearchDto, Boolean sumValues) {
+        if(sumValues == null) {
+            sumValues = true;
         }
-        if(userDataSearchDto.getStartDate() != 0) {
-            if(andFlag)
-            {
-                sqlWhere.append(" and ");
-            }
-            sqlWhere.append(" add_time <= from_unixtime(?) ");
-            args.add(userDataSearchDto.getEndDate());
-        }
-
-        return null;
-    }
-    private List<Map<String,String>> aggregateData(UserDataSearchDto userDataSearchDto) {
         StringBuffer  sqlSelect = new StringBuffer();
         StringBuffer  sqlWhere = new StringBuffer();
         StringBuffer  sqlGroupBy = new StringBuffer();
 
-        sqlSelect.append("select name ,count(value) as value, unit as unit, ");
+        sqlSelect.append("select name ,");
+        if(sumValues) {
+            sqlSelect.append(" sum(value) ");
+        } else {
+            sqlSelect.append(" value ");
+        }
+        sqlSelect.append("as value, unit as unit, ");
 
         Map<String,String> searchOptions = userDataSearchDto.getSearchParams();
 
@@ -102,6 +85,7 @@ public class UserDataSearchDao {
         List<Object> args = new ArrayList<Object>();
         boolean andFlag = false;
 
+
         if(userDataSearchDto.getStartDate() != 0) {
             sqlWhere.append(" add_time >= from_unixtime(?) ");
             args.add(userDataSearchDto.getStartDate());
@@ -124,6 +108,26 @@ public class UserDataSearchDao {
             }
             sqlWhere.append(" name = ?");
             args.add(userDataSearchDto.getName());
+            andFlag = true;
+        }
+
+        if(userDataSearchDto.getCategory() !=null) {
+            if(andFlag)
+            {
+                sqlWhere.append(" and ");
+            }
+            sqlWhere.append(" category = ? ");
+            args.add(userDataSearchDto.getCategory());
+            andFlag = true;
+        }
+
+        if(userDataSearchDto.getSubCategory() !=null) {
+            if(andFlag)
+            {
+                sqlWhere.append(" and ");
+            }
+            sqlWhere.append(" subcategory = ? ");
+            args.add(userDataSearchDto.getSubCategory());
             andFlag = true;
         }
         if(sqlWhere.length() > 0) {
